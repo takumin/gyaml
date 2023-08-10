@@ -8,7 +8,7 @@ import (
 	"github.com/urfave/cli/v2"
 
 	"github.com/takumin/gyaml/internal/command/completion"
-	"github.com/takumin/gyaml/internal/command/subcommand"
+	"github.com/takumin/gyaml/internal/command/validation"
 	"github.com/takumin/gyaml/internal/config"
 )
 
@@ -20,7 +20,10 @@ var (
 )
 
 func main() {
-	cfg := config.NewConfig()
+	cfg := config.NewConfig(
+		config.Directory("."),
+		config.Includes("yml,yaml"),
+	)
 
 	flags := []cli.Flag{
 		&cli.StringFlag{
@@ -35,7 +38,7 @@ func main() {
 
 	cmds := []*cli.Command{
 		completion.NewCommands(cfg, flags),
-		subcommand.NewCommands(cfg, flags),
+		validation.NewCommands(cfg, flags),
 	}
 
 	app := &cli.App{
