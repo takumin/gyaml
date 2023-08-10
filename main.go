@@ -7,14 +7,14 @@ import (
 
 	"github.com/urfave/cli/v2"
 
-	"github.com/takumin/boilerplate-golang-cli/internal/command/completion"
-	"github.com/takumin/boilerplate-golang-cli/internal/command/subcommand"
-	"github.com/takumin/boilerplate-golang-cli/internal/config"
+	"github.com/takumin/gyaml/internal/command/completion"
+	"github.com/takumin/gyaml/internal/command/subcommand"
+	"github.com/takumin/gyaml/internal/config"
 )
 
 var (
-	AppName  string = "boilerplate-golang-cli"      // ###BOILERPLATE_APP_NAME###
-	AppDesc  string = "Boilerplate Golang CLI Tool" // ###BOILERPLATE_APP_DESC###
+	AppName  string = "gyaml"
+	AppDesc  string = "Golang YAML Tool"
 	Version  string = "unknown"
 	Revision string = "unknown"
 )
