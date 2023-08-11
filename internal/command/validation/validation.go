@@ -1,9 +1,14 @@
 package validation
 
 import (
+	"fmt"
+	"os"
+	"strings"
+
 	"github.com/urfave/cli/v2"
 
 	"github.com/takumin/gyaml/internal/config"
+	"github.com/takumin/gyaml/internal/filelist"
 )
 
 func NewCommands(cfg *config.Config, flags []cli.Flag) *cli.Command {
@@ -44,6 +49,25 @@ func NewCommands(cfg *config.Config, flags []cli.Flag) *cli.Command {
 
 func action(cfg *config.Config) func(ctx *cli.Context) error {
 	return func(ctx *cli.Context) error {
+		if ctx.Args().Len() == 1 {
+			cfg.Path.Directory = ctx.Args().First()
+		}
+
+		paths, err := filelist.Filelist(
+			os.DirFS(cfg.Path.Directory),
+			cfg.Path.Directory,
+			strings.Split(cfg.Extention.Includes, ","),
+			strings.Split(cfg.Extention.Excludes, ","),
+		)
+		if err != nil {
+			return err
+		}
+
+		// TODO: validation implemented
+		for _, path := range paths {
+			fmt.Println(path)
+		}
+
 		return nil
 	}
 }
