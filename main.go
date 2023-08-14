@@ -15,7 +15,10 @@ import (
 )
 
 func main() {
-	cfg := config.NewConfig()
+	cfg := config.NewConfig(
+		config.Directory("."),
+		config.Includes("yml,yaml"),
+	)
 
 	flags := []cli.Flag{
 		&cli.StringFlag{
