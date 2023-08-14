@@ -1,9 +1,8 @@
 package bash
 
 import (
-	"html/template"
-	"os"
 	"strings"
+	"text/template"
 
 	"github.com/urfave/cli/v2"
 
@@ -37,14 +36,8 @@ func NewCommands(cfg *config.Config, flags []cli.Flag) *cli.Command {
 		Usage:    "bash completion",
 		HideHelp: true,
 		Action: func(ctx *cli.Context) error {
-			t, err := template.New("bashCompletion").Parse(strings.TrimSpace(bashCompletion) + "\n")
-			if err != nil {
-				return err
-			}
-			if err = t.Execute(os.Stdout, ctx.App.Name); err != nil {
-				return err
-			}
-			return nil
+			t := template.Must(template.New("bashCompletion").Parse(strings.TrimSpace(bashCompletion) + "\n"))
+			return t.Execute(ctx.App.Writer, ctx.App.Name)
 		},
 	}
 }

@@ -10,20 +10,12 @@ import (
 	"github.com/takumin/gyaml/internal/command/completion"
 	"github.com/takumin/gyaml/internal/command/validation"
 	"github.com/takumin/gyaml/internal/config"
-)
-
-var (
-	AppName  string = "gyaml"
-	AppDesc  string = "Golang YAML Tool"
-	Version  string = "unknown"
-	Revision string = "unknown"
+	"github.com/takumin/gyaml/internal/metadata"
+	"github.com/takumin/gyaml/internal/version"
 )
 
 func main() {
-	cfg := config.NewConfig(
-		config.Directory("."),
-		config.Includes("yml,yaml"),
-	)
+	cfg := config.NewConfig()
 
 	flags := []cli.Flag{
 		&cli.StringFlag{
@@ -42,9 +34,10 @@ func main() {
 	}
 
 	app := &cli.App{
-		Name:                 AppName,
-		Usage:                AppDesc,
-		Version:              fmt.Sprintf("%s (%s)", Version, Revision),
+		Name:                 metadata.AppName(),
+		Usage:                metadata.AppDesc(),
+		Version:              fmt.Sprintf("%s (%s)", version.Version(), version.Revision()),
+		Authors:              []*cli.Author{{Name: metadata.AuthorName()}},
 		Flags:                flags,
 		Commands:             cmds,
 		EnableBashCompletion: true,
