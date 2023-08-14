@@ -1,4 +1,5 @@
 APPNAME  := $(shell basename $(CURDIR))
+PKGNAME  := $(shell go mod edit -json | jq -r '.Module.Path')
 VERSION  := $(shell git describe --abbrev=0 --tags 2>/dev/null)
 REVISION := $(shell git rev-parse HEAD 2>/dev/null)
 
@@ -10,9 +11,11 @@ ifeq ($(REVISION),)
 REVISION := unknown
 endif
 
-LDFLAGS_APPNAME  := -X "main.AppName=$(APPNAME)"
-LDFLAGS_VERSION  := -X "main.Version=$(VERSION)"
-LDFLAGS_REVISION := -X "main.Revision=$(REVISION)"
+SRCS := $(shell find . -type f -name '*.go')
+
+LDFLAGS_APPNAME  := -X "$(PKGNAME)/internal/metadata.appName=$(APPNAME)"
+LDFLAGS_VERSION  := -X "$(PKGNAME)/internal/version.version=$(VERSION)"
+LDFLAGS_REVISION := -X "$(PKGNAME)/internal/version.revision=$(REVISION)"
 LDFLAGS          := -s -w -buildid= $(LDFLAGS_APPNAME) $(LDFLAGS_VERSION) $(LDFLAGS_REVISION) -extldflags -static
 BUILDFLAGS       := -trimpath -ldflags '$(LDFLAGS)'
 
@@ -57,7 +60,14 @@ lint:
 
 .PHONY: test
 test:
-	CGO_ENABLED=0 go test ./...
+	go test -trimpath -cover -covermode atomic ./...
+
+.PHONY: coverage
+coverage: coverage.out coverage.html
+coverage.out: $(SRCS)
+	go test -trimpath -cover -covermode atomic -coverprofile=coverage.out ./...
+coverage.html: coverage.out
+	go tool cover -html=coverage.out -o coverage.html
 
 .PHONY: build
 build: bin/$(APPNAME)
@@ -83,3 +93,5 @@ clean:
 	rm -rf bin
 	rm -rf dist
 	rm -rf book
+	rm -f coverage.out
+	rm -f coverage.html
