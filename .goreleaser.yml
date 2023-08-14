@@ -16,9 +16,10 @@ builds:
   - -trimpath
   ldflags:
   - -s -w
-  - -X main.AppName={{ .ProjectName }}
-  - -X main.Version={{ .Version }}
-  - -X main.Revision={{ .FullCommit }}
+  - -buildid=
+  - -X {{ .ModulePath }}/internal/metadata.AppName={{ .ProjectName }}
+  - -X {{ .ModulePath }}/internal/version.version={{ .Version }}
+  - -X {{ .ModulePath }}/internal/version.revision={{ .FullCommit }}
   - -extldflags -static
 archives:
 - name_template: '{{ .ProjectName }}_{{ .Os }}_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}'
