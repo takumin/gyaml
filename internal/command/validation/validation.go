@@ -3,7 +3,6 @@ package validation
 import (
 	"fmt"
 	"os"
-	"strings"
 
 	"github.com/urfave/cli/v2"
 
@@ -13,19 +12,23 @@ import (
 
 func NewCommands(cfg *config.Config, flags []cli.Flag) *cli.Command {
 	flags = append(flags, []cli.Flag{
-		&cli.StringFlag{
-			Name:        "includes",
-			Aliases:     []string{"i"},
-			Usage:       "include files extensions",
-			EnvVars:     []string{"INCLUDES"},
+		&cli.MultiStringFlag{
+			Target: &cli.StringSliceFlag{
+				Name:    "include",
+				Aliases: []string{"i"},
+				Usage:   "include file extension",
+				EnvVars: []string{"INCLUDE"},
+			},
 			Value:       cfg.Extention.Includes,
 			Destination: &cfg.Extention.Includes,
 		},
-		&cli.StringFlag{
-			Name:        "excludes",
-			Aliases:     []string{"e"},
-			Usage:       "exclude files extensions",
-			EnvVars:     []string{"EXCLUDES"},
+		&cli.MultiStringFlag{
+			Target: &cli.StringSliceFlag{
+				Name:    "exclude",
+				Aliases: []string{"e"},
+				Usage:   "exclude file extension",
+				EnvVars: []string{"EXCLUDE"},
+			},
 			Value:       cfg.Extention.Excludes,
 			Destination: &cfg.Extention.Excludes,
 		},
@@ -57,8 +60,8 @@ func action(cfg *config.Config) func(ctx *cli.Context) error {
 			temp, err := filelist.Filelist(
 				os.DirFS(v),
 				v,
-				strings.Split(cfg.Extention.Includes, ","),
-				strings.Split(cfg.Extention.Excludes, ","),
+				cfg.Extention.Includes,
+				cfg.Extention.Excludes,
 			)
 			if err != nil {
 				return err
