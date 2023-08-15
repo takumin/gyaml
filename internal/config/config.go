@@ -6,8 +6,8 @@ type Config struct {
 	Paths []string
 
 	Extention struct {
-		Includes string
-		Excludes string
+		Includes []string
+		Excludes []string
 	}
 }
 

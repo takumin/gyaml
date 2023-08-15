@@ -16,14 +16,14 @@ func (o Path) Apply(c *Config) {
 	c.Paths = append(c.Paths, string(o))
 }
 
-type Includes string
+type Include string
 
-func (o Includes) Apply(c *Config) {
-	c.Extention.Includes = string(o)
+func (o Include) Apply(c *Config) {
+	c.Extention.Includes = append(c.Extention.Includes, string(o))
 }
 
-type Excludes string
+type Exclude string
 
-func (o Excludes) Apply(c *Config) {
-	c.Extention.Excludes = string(o)
+func (o Exclude) Apply(c *Config) {
+	c.Extention.Excludes = append(c.Extention.Excludes, string(o))
 }

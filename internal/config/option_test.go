@@ -28,9 +28,9 @@ func TestPath(t *testing.T) {
 
 func TestIncludes(t *testing.T) {
 	want := &config.Config{}
-	want.Extention.Includes = "TEST"
+	want.Extention.Includes = []string{"TEST"}
 	got := &config.Config{}
-	config.Includes("TEST").Apply(got)
+	config.Include("TEST").Apply(got)
 	if !reflect.DeepEqual(want, got) {
 		t.Error("expected config struct to be equal, but got not equal")
 	}
@@ -38,9 +38,9 @@ func TestIncludes(t *testing.T) {
 
 func TestExcludes(t *testing.T) {
 	want := &config.Config{}
-	want.Extention.Excludes = "TEST"
+	want.Extention.Excludes = []string{"TEST"}
 	got := &config.Config{}
-	config.Excludes("TEST").Apply(got)
+	config.Exclude("TEST").Apply(got)
 	if !reflect.DeepEqual(want, got) {
 		t.Error("expected config struct to be equal, but got not equal")
 	}
