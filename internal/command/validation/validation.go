@@ -48,9 +48,8 @@ func NewCommands(cfg *config.Config, flags []cli.Flag) *cli.Command {
 func before(cfg *config.Config) func(ctx *cli.Context) error {
 	return func(ctx *cli.Context) error {
 		if ctx.NArg() >= 1 {
-			cfg.Paths = ctx.Args().Slice()
+			cfg.Paths = helpers.RemoveDuplicateStrings(ctx.Args().Slice())
 		}
-		cfg.Paths = helpers.RemoveDuplicateStrings(cfg.Paths)
 		return nil
 	}
 }
