@@ -10,10 +10,10 @@ func (o LogLevel) Apply(c *Config) {
 	c.LogLevel = string(o)
 }
 
-type Directory string
+type Path string
 
-func (o Directory) Apply(c *Config) {
-	c.Path.Directory = string(o)
+func (o Path) Apply(c *Config) {
+	c.Paths = append(c.Paths, string(o))
 }
 
 type Includes string
