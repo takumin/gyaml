@@ -55,7 +55,6 @@ func action(cfg *config.Config) func(ctx *cli.Context) error {
 
 		paths, err := filelist.Filelist(
 			os.DirFS(cfg.Path.Directory),
-			cfg.Path.Directory,
 			strings.Split(cfg.Extention.Includes, ","),
 			strings.Split(cfg.Extention.Excludes, ","),
 		)
