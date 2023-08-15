@@ -59,16 +59,25 @@ func action(cfg *config.Config) func(ctx *cli.Context) error {
 		paths := make([]string, 0, 1024)
 
 		for _, v := range cfg.Paths {
-			temp, err := filelist.Filelist(
-				os.DirFS(v),
-				v,
-				cfg.Extention.Includes,
-				cfg.Extention.Excludes,
-			)
+			info, err := os.Stat(v)
 			if err != nil {
 				return err
 			}
-			paths = append(paths, temp...)
+
+			if info.IsDir() {
+				temp, err := filelist.Filelist(
+					os.DirFS(v),
+					v,
+					cfg.Extention.Includes,
+					cfg.Extention.Excludes,
+				)
+				if err != nil {
+					return err
+				}
+				paths = append(paths, temp...)
+			} else {
+				paths = append(paths, v)
+			}
 		}
 
 		// TODO: validation implemented
