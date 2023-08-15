@@ -18,7 +18,7 @@ func TestLogLevel(t *testing.T) {
 
 func TestPath(t *testing.T) {
 	want := &config.Config{}
-	want.PathList = []string{"TEST"}
+	want.Paths = []string{"TEST"}
 	got := &config.Config{}
 	config.Path("TEST").Apply(got)
 	if !reflect.DeepEqual(want, got) {
