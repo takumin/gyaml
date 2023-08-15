@@ -6,10 +6,10 @@ import (
 	"path/filepath"
 )
 
-func Filelist(fsys fs.FS, root string, includes, excludes []string) ([]string, error) {
+func Filelist(fsys fs.FS, includes, excludes []string) ([]string, error) {
 	list := make([]string, 0, 65536)
 
-	err := fs.WalkDir(fsys, root, func(path string, d fs.DirEntry, err error) error {
+	err := fs.WalkDir(fsys, ".", func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
 			return err
 		}

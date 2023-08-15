@@ -26,21 +26,18 @@ func TestFilelist(t *testing.T) {
 
 	tests := []struct {
 		name     string
-		root     string
 		includes []string
 		excludes []string
 		want     []string
 	}{
 		{
 			name:     "Include go, Exclude None",
-			root:     ".",
 			includes: []string{"go"},
 			excludes: []string{},
 			want:     []string{"test.go", "foo/test.go", "foo/bar/test.go"},
 		},
 		{
 			name:     "Include txt, Exclude exc.txt",
-			root:     ".",
 			includes: []string{"txt"},
 			excludes: []string{"exc.txt"},
 			want:     []string{"test.txt", "test.inc.txt", "foo/test.txt", "foo/test.inc.txt", "foo/bar/test.txt", "foo/bar/test.inc.txt"},
@@ -49,7 +46,7 @@ func TestFilelist(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := filelist.Filelist(testFS, tt.root, tt.includes, tt.excludes)
+			got, err := filelist.Filelist(testFS, tt.includes, tt.excludes)
 			if err != nil {
 				t.Errorf("Unexpected error: %v", err)
 				return
