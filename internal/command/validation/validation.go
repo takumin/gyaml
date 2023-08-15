@@ -14,14 +14,6 @@ import (
 func NewCommands(cfg *config.Config, flags []cli.Flag) *cli.Command {
 	flags = append(flags, []cli.Flag{
 		&cli.StringFlag{
-			Name:        "directory",
-			Aliases:     []string{"d"},
-			Usage:       "search base directory",
-			EnvVars:     []string{"DIRECTORY"},
-			Value:       cfg.Path.Directory,
-			Destination: &cfg.Path.Directory,
-		},
-		&cli.StringFlag{
 			Name:        "includes",
 			Aliases:     []string{"i"},
 			Usage:       "include files extensions",
@@ -39,28 +31,39 @@ func NewCommands(cfg *config.Config, flags []cli.Flag) *cli.Command {
 		},
 	}...)
 	return &cli.Command{
-		Name:    "validation",
-		Aliases: []string{"validate", "valid", "v"},
-		Usage:   "yaml file validation",
-		Flags:   flags,
-		Action:  action(cfg),
+		Name:      "validation",
+		Aliases:   []string{"validate", "valid", "v"},
+		Usage:     "yaml file validation",
+		ArgsUsage: "[file or directory...]",
+		Flags:     flags,
+		Before:    before(cfg),
+		Action:    action(cfg),
+	}
+}
+
+func before(cfg *config.Config) func(ctx *cli.Context) error {
+	return func(ctx *cli.Context) error {
+		cfg.Paths = append(cfg.Paths, ctx.Args().Slice()...)
+		cfg.Paths = removeDuplicateString(cfg.Paths)
+		return nil
 	}
 }
 
 func action(cfg *config.Config) func(ctx *cli.Context) error {
 	return func(ctx *cli.Context) error {
-		if ctx.Args().Len() == 1 {
-			cfg.Path.Directory = ctx.Args().First()
-		}
+		paths := make([]string, 0, 1024)
 
-		paths, err := filelist.Filelist(
-			os.DirFS(cfg.Path.Directory),
-			cfg.Path.Directory,
-			strings.Split(cfg.Extention.Includes, ","),
-			strings.Split(cfg.Extention.Excludes, ","),
-		)
-		if err != nil {
-			return err
+		for _, v := range cfg.Paths {
+			temp, err := filelist.Filelist(
+				os.DirFS(v),
+				v,
+				strings.Split(cfg.Extention.Includes, ","),
+				strings.Split(cfg.Extention.Excludes, ","),
+			)
+			if err != nil {
+				return err
+			}
+			paths = append(paths, temp...)
 		}
 
 		// TODO: validation implemented
@@ -70,4 +73,15 @@ func action(cfg *config.Config) func(ctx *cli.Context) error {
 
 		return nil
 	}
+}
+
+func removeDuplicateString(l []string) (r []string) {
+	k := make(map[string]bool)
+	for _, s := range l {
+		if _, ok := k[s]; !ok {
+			k[s] = true
+			r = append(r, s)
+		}
+	}
+	return r
 }

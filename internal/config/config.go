@@ -3,10 +3,7 @@ package config
 type Config struct {
 	LogLevel string
 
-	Path struct {
-		File      string
-		Directory string
-	}
+	Paths []string
 
 	Extention struct {
 		Includes string

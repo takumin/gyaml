@@ -16,7 +16,7 @@ import (
 
 func main() {
 	cfg := config.NewConfig(
-		config.Directory("."),
+		config.Path("."),
 		config.Includes("yml,yaml"),
 	)
 

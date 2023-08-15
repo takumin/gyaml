@@ -16,11 +16,11 @@ func TestLogLevel(t *testing.T) {
 	}
 }
 
-func TestDirectory(t *testing.T) {
+func TestPath(t *testing.T) {
 	want := &config.Config{}
-	want.Path.Directory = "TEST"
+	want.PathList = []string{"TEST"}
 	got := &config.Config{}
-	config.Directory("TEST").Apply(got)
+	config.Path("TEST").Apply(got)
 	if !reflect.DeepEqual(want, got) {
 		t.Error("expected config struct to be equal, but got not equal")
 	}
