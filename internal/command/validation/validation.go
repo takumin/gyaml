@@ -8,6 +8,7 @@ import (
 
 	"github.com/takumin/gyaml/internal/config"
 	"github.com/takumin/gyaml/internal/filelist"
+	"github.com/takumin/gyaml/internal/helpers"
 )
 
 func NewCommands(cfg *config.Config, flags []cli.Flag) *cli.Command {
@@ -47,7 +48,7 @@ func NewCommands(cfg *config.Config, flags []cli.Flag) *cli.Command {
 func before(cfg *config.Config) func(ctx *cli.Context) error {
 	return func(ctx *cli.Context) error {
 		cfg.Paths = append(cfg.Paths, ctx.Args().Slice()...)
-		cfg.Paths = removeDuplicateString(cfg.Paths)
+		cfg.Paths = helpers.RemoveDuplicateStrings(cfg.Paths)
 		return nil
 	}
 }
@@ -76,15 +77,4 @@ func action(cfg *config.Config) func(ctx *cli.Context) error {
 
 		return nil
 	}
-}
-
-func removeDuplicateString(l []string) (r []string) {
-	k := make(map[string]bool)
-	for _, s := range l {
-		if _, ok := k[s]; !ok {
-			k[s] = true
-			r = append(r, s)
-		}
-	}
-	return r
 }
