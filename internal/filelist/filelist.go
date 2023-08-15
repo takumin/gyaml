@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 )
 
-func Filelist(fsys fs.FS, includes, excludes []string) ([]string, error) {
+func Filelist(fsys fs.FS, root string, includes, excludes []string) ([]string, error) {
 	list := make([]string, 0, 65536)
 
 	err := fs.WalkDir(fsys, ".", func(path string, d fs.DirEntry, err error) error {
@@ -34,7 +34,7 @@ func Filelist(fsys fs.FS, includes, excludes []string) ([]string, error) {
 				return err
 			}
 			if matched {
-				list = append(list, path)
+				list = append(list, filepath.Join(root, path))
 				return nil
 			}
 		}
