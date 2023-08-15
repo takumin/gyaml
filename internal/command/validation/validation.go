@@ -1,7 +1,6 @@
 package validation
 
 import (
-	"fmt"
 	"os"
 
 	"github.com/urfave/cli/v2"
@@ -9,6 +8,7 @@ import (
 	"github.com/takumin/gyaml/internal/config"
 	"github.com/takumin/gyaml/internal/filelist"
 	"github.com/takumin/gyaml/internal/helpers"
+	"github.com/takumin/gyaml/internal/validate"
 )
 
 func NewCommands(cfg *config.Config, flags []cli.Flag) *cli.Command {
@@ -82,7 +82,10 @@ func action(cfg *config.Config) func(ctx *cli.Context) error {
 
 		// TODO: validation implemented
 		for _, path := range paths {
-			fmt.Println(path)
+			_, err := validate.Validate(path)
+			if err != nil {
+				return err
+			}
 		}
 
 		return nil
