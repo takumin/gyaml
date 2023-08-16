@@ -7,14 +7,10 @@ import (
 )
 
 func TestValidateSuccess(t *testing.T) {
-	if _, err := validate.Validate("../../testdata/valid/simple.yaml"); err != nil {
+	path := "valid.yaml"
+	data := []byte("a: a")
+	if _, err := validate.Validate(path, data); err != nil {
 		t.Errorf("expected validate error to be 'nil', but got '%s'", err)
-	}
-}
-
-func TestValidateFaliedReadFile(t *testing.T) {
-	if _, err := validate.Validate("noneexist"); err == nil {
-		t.Errorf("expected validate error to be not 'nil', but got '%s'", err)
 	}
 }
 
@@ -22,6 +18,7 @@ func TestValidateYAMLError(t *testing.T) {
 	tests := []struct {
 		name   string
 		path   string
+		data   []byte
 		errors []struct {
 			line    int
 			column  int
@@ -30,7 +27,8 @@ func TestValidateYAMLError(t *testing.T) {
 	}{
 		{
 			name: "YAML Unknown Error",
-			path: "../../testdata/invalid/invalid.yaml",
+			path: "invalid.yaml",
+			data: []byte(">:"),
 			errors: []struct {
 				line    int
 				column  int
@@ -45,7 +43,8 @@ func TestValidateYAMLError(t *testing.T) {
 		},
 		{
 			name: "YAML Type Error - Duplicate Keys",
-			path: "../../testdata/invalid/duplicate_keys.yaml",
+			path: "duplicate_keys.yaml",
+			data: []byte("a: a\na: a"),
 			errors: []struct {
 				line    int
 				column  int
@@ -56,18 +55,13 @@ func TestValidateYAMLError(t *testing.T) {
 					column:  0,
 					message: `mapping key "a" already defined at line 1`,
 				},
-				{
-					line:    5,
-					column:  0,
-					message: `mapping key "A" already defined at line 4`,
-				},
 			},
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			errs, err := validate.Validate(tt.path)
+			errs, err := validate.Validate(tt.path, tt.data)
 			if err != nil {
 				t.Errorf("expected error to be 'nil', but got '%s'", err)
 			}

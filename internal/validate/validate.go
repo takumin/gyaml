@@ -2,8 +2,6 @@ package validate
 
 import (
 	"fmt"
-	"os"
-	"path/filepath"
 	"regexp"
 	"strconv"
 	"strings"
@@ -48,12 +46,7 @@ func (e *validateError) Message() string {
 	return e.message
 }
 
-func Validate(path string) ([]ValidaError, error) {
-	data, err := os.ReadFile(filepath.Clean(path))
-	if err != nil {
-		return nil, err
-	}
-
+func Validate(path string, data []byte) ([]ValidaError, error) {
 	var errs []*validateError
 	var obj interface{}
 	if err := yaml.Unmarshal(data, &obj); err != nil {
