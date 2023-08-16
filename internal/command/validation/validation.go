@@ -3,6 +3,7 @@ package validation
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 
 	"github.com/urfave/cli/v2"
 
@@ -83,7 +84,12 @@ func action(cfg *config.Config) func(ctx *cli.Context) error {
 		}
 
 		for _, path := range paths {
-			errs, err := validate.Validate(path)
+			data, err := os.ReadFile(filepath.Clean(path))
+			if err != nil {
+				return err
+			}
+
+			errs, err := validate.Validate(path, data)
 			if err != nil {
 				return err
 			}
