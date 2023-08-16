@@ -11,7 +11,7 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-var re = regexp.MustCompile(`line (\d+): (.*)`)
+var re = regexp.MustCompile(`^line (\d+): (.*)$`)
 
 type ValidaError interface {
 	Error() string
@@ -74,14 +74,10 @@ func Validate(path string) ([]ValidaError, error) {
 				}
 			}
 		} else {
-			if s, found := strings.CutPrefix(err.Error(), "yaml: "); found {
-				errs = append(errs, &validateError{
-					path:    path,
-					message: s,
-				})
-			} else {
-				return nil, fmt.Errorf("unknown yaml error: '%s'", err)
-			}
+			errs = append(errs, &validateError{
+				path:    path,
+				message: strings.TrimPrefix(err.Error(), "yaml: "),
+			})
 		}
 	}
 
