@@ -9,7 +9,11 @@ import (
 func TestParseSuccess(t *testing.T) {
 	path := "valid.yaml"
 	data := []byte("a: a")
-	if _, err := parser.Parse(path, data); err != nil {
+	errs, err := parser.Parse(path, data)
+	if err != nil {
+		t.Errorf("expected parse error to be 'nil', but got '%s'", err)
+	}
+	if errs != nil {
 		t.Errorf("expected parse error to be 'nil', but got '%s'", err)
 	}
 }
@@ -74,17 +78,17 @@ func TestParseYAMLError(t *testing.T) {
 				if len(e.Error()) <= 0 {
 					t.Errorf("expected parse error %d result to be not empty", i)
 				}
-				if e.Path() != tt.path {
-					t.Errorf("expected parse error %d path to be '%s', but got '%s'", i, tt.path, e.Path())
+				if e.Path != tt.path {
+					t.Errorf("expected parse error %d path to be '%s', but got '%s'", i, tt.path, e.Path)
 				}
-				if e.Line() != tt.errors[i].line {
-					t.Errorf("expected parse error %d line to be '%d', but got '%d'", i, tt.errors[i].line, e.Line())
+				if e.Line != tt.errors[i].line {
+					t.Errorf("expected parse error %d line to be '%d', but got '%d'", i, tt.errors[i].line, e.Line)
 				}
-				if e.Column() != tt.errors[i].column {
-					t.Errorf("expected parse error %d column to be '%d', but got '%d'", i, tt.errors[i].column, e.Column())
+				if e.Column != tt.errors[i].column {
+					t.Errorf("expected parse error %d column to be '%d', but got '%d'", i, tt.errors[i].column, e.Column)
 				}
-				if e.Message() != tt.errors[i].message {
-					t.Errorf("expected parse error %d message to be '%s', but got '%s'", i, tt.errors[i].message, e.Message())
+				if e.Message != tt.errors[i].message {
+					t.Errorf("expected parse error %d message to be '%s', but got '%s'", i, tt.errors[i].message, e.Message)
 				}
 			}
 		})
