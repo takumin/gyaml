@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"sort"
 
 	"github.com/urfave/cli/v2"
 
@@ -60,7 +61,6 @@ func before(cfg *config.Config) func(ctx *cli.Context) error {
 func action(cfg *config.Config) func(ctx *cli.Context) error {
 	return func(ctx *cli.Context) error {
 		paths := make([]string, 0, 1024)
-
 		for _, v := range cfg.Paths {
 			info, err := os.Stat(v)
 			if err != nil {
@@ -83,18 +83,30 @@ func action(cfg *config.Config) func(ctx *cli.Context) error {
 			}
 		}
 
+		errs := make(map[string][]*parser.ParseError, len(paths))
 		for _, path := range paths {
 			data, err := os.ReadFile(filepath.Clean(path))
 			if err != nil {
 				return err
 			}
-
-			errs, err := parser.Parse(path, data)
+			perrs, err := parser.Parse(path, data)
 			if err != nil {
 				return err
 			}
-			// TODO: report rdjsonl
-			for _, e := range errs {
+			if perrs != nil {
+				errs[path] = perrs
+			}
+		}
+
+		keys := make([]string, 0, len(errs))
+		for k := range errs {
+			keys = append(keys, k)
+		}
+		sort.Strings(keys)
+
+		// TODO: report rdjsonl
+		for _, k := range keys {
+			for _, e := range errs[k] {
 				fmt.Println(e)
 			}
 		}
