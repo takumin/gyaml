@@ -81,10 +81,13 @@ func Validate(path string) ([]ValidaError, error) {
 		}
 	}
 
-	var res []ValidaError
-	for _, v := range errs {
-		res = append(res, v)
+	if len(errs) > 0 {
+		res := make([]ValidaError, 0, len(errs))
+		for _, v := range errs {
+			res = append(res, v)
+		}
+		return res, nil
+	} else {
+		return nil, nil
 	}
-
-	return res, nil
 }
