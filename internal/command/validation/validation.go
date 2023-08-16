@@ -35,13 +35,14 @@ func NewCommands(cfg *config.Config, flags []cli.Flag) *cli.Command {
 		},
 	}...)
 	return &cli.Command{
-		Name:      "validation",
-		Aliases:   []string{"validate", "valid", "v"},
-		Usage:     "yaml file validation",
-		ArgsUsage: "[file or directory...]",
-		Flags:     flags,
-		Before:    before(cfg),
-		Action:    action(cfg),
+		Name:            "validation",
+		Aliases:         []string{"validate", "valid", "v"},
+		Usage:           "yaml file validation",
+		ArgsUsage:       "[file or directory...]",
+		HideHelpCommand: true,
+		Flags:           flags,
+		Before:          before(cfg),
+		Action:          action(cfg),
 	}
 }
 
