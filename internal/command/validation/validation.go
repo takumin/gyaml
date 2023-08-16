@@ -17,6 +17,14 @@ import (
 
 func NewCommands(cfg *config.Config, flags []cli.Flag) *cli.Command {
 	flags = append(flags, []cli.Flag{
+		&cli.StringFlag{
+			Name:        "type",
+			Aliases:     []string{"t"},
+			Usage:       "report type",
+			EnvVars:     []string{"TYPE"},
+			Value:       cfg.Report.Type,
+			Destination: &cfg.Report.Type,
+		},
 		&cli.MultiStringFlag{
 			Target: &cli.StringSliceFlag{
 				Name:    "include",
@@ -107,11 +115,16 @@ func action(cfg *config.Config) func(ctx *cli.Context) error {
 
 		for _, k := range keys {
 			for _, e := range errs[k] {
-				buf, err := report.ReviewdogDiagnosticJSONLines(e.Path, e.Message, e.Line, e.Column)
-				if err != nil {
-					return err
+				switch cfg.Report.Type {
+				case "rdjsonl":
+					buf, err := report.ReviewdogDiagnosticJSONLines(e.Path, e.Message, e.Line, e.Column)
+					if err != nil {
+						return err
+					}
+					fmt.Fprintln(ctx.App.Writer, string(buf))
+				default:
+					return fmt.Errorf("unsupported report type: %s", cfg.Report.Type)
 				}
-				fmt.Println(string(buf))
 			}
 		}
 
