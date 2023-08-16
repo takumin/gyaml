@@ -11,44 +11,21 @@ import (
 
 var re = regexp.MustCompile(`^line (\d+): (.*)$`)
 
-type ParseError interface {
-	Error() string
-	Path() string
-	Line() int
-	Column() int
-	Message() string
+type ParseError struct {
+	Path    string
+	Line    int
+	Column  int
+	Message string
 }
 
-type parseError struct {
-	path    string
-	line    int
-	column  int
-	message string
+func (e *ParseError) Error() string {
+	return fmt.Sprintf("failed to %s:%d:%d %s", e.Path, e.Line, e.Column, e.Message)
 }
 
-func (e *parseError) Error() string {
-	return fmt.Sprintf("failed to %s:%d:%d %s", e.path, e.line, e.column, e.message)
-}
-
-func (e *parseError) Path() string {
-	return e.path
-}
-
-func (e *parseError) Line() int {
-	return e.line
-}
-
-func (e *parseError) Column() int {
-	return e.column
-}
-
-func (e *parseError) Message() string {
-	return e.message
-}
-
-func Parse(path string, data []byte) ([]ParseError, error) {
-	var errs []*parseError
+func Parse(path string, data []byte) ([]*ParseError, error) {
+	var errs []*ParseError
 	var obj interface{}
+
 	if err := yaml.Unmarshal(data, &obj); err != nil {
 		if te, ok := err.(*yaml.TypeError); ok {
 			for _, e := range te.Errors {
@@ -57,29 +34,25 @@ func Parse(path string, data []byte) ([]ParseError, error) {
 					if err != nil {
 						return nil, err
 					}
-					errs = append(errs, &parseError{
-						path:    path,
-						line:    line,
-						message: s[2],
+					errs = append(errs, &ParseError{
+						Path:    path,
+						Line:    line,
+						Message: s[2],
 					})
 				} else {
 					return nil, fmt.Errorf("unknown yaml type error: '%s'", e)
 				}
 			}
 		} else {
-			errs = append(errs, &parseError{
-				path:    path,
-				message: strings.TrimPrefix(err.Error(), "yaml: "),
+			errs = append(errs, &ParseError{
+				Path:    path,
+				Message: strings.TrimPrefix(err.Error(), "yaml: "),
 			})
 		}
 	}
 
 	if len(errs) > 0 {
-		res := make([]ParseError, 0, len(errs))
-		for _, v := range errs {
-			res = append(res, v)
-		}
-		return res, nil
+		return errs, nil
 	} else {
 		return nil, nil
 	}
