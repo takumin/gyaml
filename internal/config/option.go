@@ -27,3 +27,9 @@ type Exclude string
 func (o Exclude) Apply(c *Config) {
 	c.Extention.Excludes = append(c.Extention.Excludes, string(o))
 }
+
+type ReportType string
+
+func (o ReportType) Apply(c *Config) {
+	c.Report.Type = string(o)
+}

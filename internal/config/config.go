@@ -9,6 +9,10 @@ type Config struct {
 		Includes []string
 		Excludes []string
 	}
+
+	Report struct {
+		Type string
+	}
 }
 
 func NewConfig(opts ...Option) *Config {

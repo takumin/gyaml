@@ -19,6 +19,7 @@ func main() {
 		config.Path("."),
 		config.Include("yml"),
 		config.Include("yaml"),
+		config.ReportType("rdjsonl"),
 	)
 
 	flags := []cli.Flag{
