@@ -45,3 +45,12 @@ func TestExcludes(t *testing.T) {
 		t.Error("expected config struct to be equal, but got not equal")
 	}
 }
+
+func TestReportType(t *testing.T) {
+	want := &config.Config{Report: struct{ Type string }{Type: "TEST"}}
+	got := &config.Config{}
+	config.ReportType("TEST").Apply(got)
+	if !reflect.DeepEqual(want, got) {
+		t.Error("expected config struct to be equal, but got not equal")
+	}
+}
