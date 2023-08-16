@@ -10,7 +10,7 @@ import (
 	"github.com/takumin/gyaml/internal/config"
 	"github.com/takumin/gyaml/internal/filelist"
 	"github.com/takumin/gyaml/internal/helpers"
-	"github.com/takumin/gyaml/internal/validate"
+	"github.com/takumin/gyaml/internal/parser"
 )
 
 func NewCommands(cfg *config.Config, flags []cli.Flag) *cli.Command {
@@ -89,7 +89,7 @@ func action(cfg *config.Config) func(ctx *cli.Context) error {
 				return err
 			}
 
-			errs, err := validate.Validate(path, data)
+			errs, err := parser.Parse(path, data)
 			if err != nil {
 				return err
 			}

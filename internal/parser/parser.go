@@ -1,4 +1,4 @@
-package validate
+package parser
 
 import (
 	"fmt"
@@ -11,7 +11,7 @@ import (
 
 var re = regexp.MustCompile(`^line (\d+): (.*)$`)
 
-type ValidaError interface {
+type ParseError interface {
 	Error() string
 	Path() string
 	Line() int
@@ -19,35 +19,35 @@ type ValidaError interface {
 	Message() string
 }
 
-type validateError struct {
+type parseError struct {
 	path    string
 	line    int
 	column  int
 	message string
 }
 
-func (e *validateError) Error() string {
+func (e *parseError) Error() string {
 	return fmt.Sprintf("failed to %s:%d:%d %s", e.path, e.line, e.column, e.message)
 }
 
-func (e *validateError) Path() string {
+func (e *parseError) Path() string {
 	return e.path
 }
 
-func (e *validateError) Line() int {
+func (e *parseError) Line() int {
 	return e.line
 }
 
-func (e *validateError) Column() int {
+func (e *parseError) Column() int {
 	return e.column
 }
 
-func (e *validateError) Message() string {
+func (e *parseError) Message() string {
 	return e.message
 }
 
-func Validate(path string, data []byte) ([]ValidaError, error) {
-	var errs []*validateError
+func Parse(path string, data []byte) ([]ParseError, error) {
+	var errs []*parseError
 	var obj interface{}
 	if err := yaml.Unmarshal(data, &obj); err != nil {
 		if te, ok := err.(*yaml.TypeError); ok {
@@ -57,7 +57,7 @@ func Validate(path string, data []byte) ([]ValidaError, error) {
 					if err != nil {
 						return nil, err
 					}
-					errs = append(errs, &validateError{
+					errs = append(errs, &parseError{
 						path:    path,
 						line:    line,
 						message: s[2],
@@ -67,7 +67,7 @@ func Validate(path string, data []byte) ([]ValidaError, error) {
 				}
 			}
 		} else {
-			errs = append(errs, &validateError{
+			errs = append(errs, &parseError{
 				path:    path,
 				message: strings.TrimPrefix(err.Error(), "yaml: "),
 			})
@@ -75,7 +75,7 @@ func Validate(path string, data []byte) ([]ValidaError, error) {
 	}
 
 	if len(errs) > 0 {
-		res := make([]ValidaError, 0, len(errs))
+		res := make([]ParseError, 0, len(errs))
 		for _, v := range errs {
 			res = append(res, v)
 		}
