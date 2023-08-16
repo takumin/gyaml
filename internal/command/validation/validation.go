@@ -12,6 +12,7 @@ import (
 	"github.com/takumin/gyaml/internal/filelist"
 	"github.com/takumin/gyaml/internal/helpers"
 	"github.com/takumin/gyaml/internal/parser"
+	"github.com/takumin/gyaml/internal/report"
 )
 
 func NewCommands(cfg *config.Config, flags []cli.Flag) *cli.Command {
@@ -104,10 +105,13 @@ func action(cfg *config.Config) func(ctx *cli.Context) error {
 		}
 		sort.Strings(keys)
 
-		// TODO: report rdjsonl
 		for _, k := range keys {
 			for _, e := range errs[k] {
-				fmt.Println(e)
+				buf, err := report.ReviewdogDiagnosticJSONLines(e.Path, e.Message, e.Line, e.Column)
+				if err != nil {
+					return err
+				}
+				fmt.Println(string(buf))
 			}
 		}
 
