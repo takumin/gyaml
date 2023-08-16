@@ -4,29 +4,91 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"regexp"
+	"strconv"
+	"strings"
 
 	"gopkg.in/yaml.v3"
 )
 
-func Validate(path string) (string, error) {
+var re = regexp.MustCompile(`line (\d+): (.*)`)
+
+type ValidaError interface {
+	Error() string
+	Path() string
+	Line() int
+	Column() int
+	Message() string
+}
+
+type validateError struct {
+	path    string
+	line    int
+	column  int
+	message string
+}
+
+func (e *validateError) Error() string {
+	return fmt.Sprintf("failed to %s:%d:%d %s", e.path, e.line, e.column, e.message)
+}
+
+func (e *validateError) Path() string {
+	return e.path
+}
+
+func (e *validateError) Line() int {
+	return e.line
+}
+
+func (e *validateError) Column() int {
+	return e.column
+}
+
+func (e *validateError) Message() string {
+	return e.message
+}
+
+func Validate(path string) ([]ValidaError, error) {
 	data, err := os.ReadFile(filepath.Clean(path))
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
+	var errs []*validateError
 	var obj interface{}
 	if err := yaml.Unmarshal(data, &obj); err != nil {
 		if te, ok := err.(*yaml.TypeError); ok {
-			// TODO: parse error
-			for _, v := range te.Errors {
-				fmt.Println(v)
+			for _, e := range te.Errors {
+				if s := re.FindStringSubmatch(e); len(s) > 1 {
+					line, err := strconv.Atoi(s[1])
+					if err != nil {
+						return nil, err
+					}
+					errs = append(errs, &validateError{
+						path:    path,
+						line:    line,
+						message: s[2],
+					})
+				} else {
+					return nil, fmt.Errorf("unknown yaml type error: '%s'", e)
+				}
 			}
 		} else {
-			// TODO: parse error
-			fmt.Println(err)
+			if s, found := strings.CutPrefix(err.Error(), "yaml: "); found {
+				errs = append(errs, &validateError{
+					path:    path,
+					message: s,
+				})
+			} else {
+				return nil, fmt.Errorf("unknown yaml error: '%s'", err)
+			}
 		}
 	}
 
-	// TODO: rdjsonl result
-	return "", nil
+	var res []ValidaError
+	for _, v := range errs {
+		res = append(res, v)
+	}
+
+	return res, nil
 }

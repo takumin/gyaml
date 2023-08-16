@@ -1,6 +1,7 @@
 package validation
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/urfave/cli/v2"
@@ -81,11 +82,14 @@ func action(cfg *config.Config) func(ctx *cli.Context) error {
 			}
 		}
 
-		// TODO: validation implemented
 		for _, path := range paths {
-			_, err := validate.Validate(path)
+			errs, err := validate.Validate(path)
 			if err != nil {
 				return err
+			}
+			// TODO: report rdjsonl
+			for _, e := range errs {
+				fmt.Println(e)
 			}
 		}
 
