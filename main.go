@@ -17,8 +17,8 @@ import (
 func main() {
 	cfg := config.NewConfig(
 		config.Path("."),
-		config.Include("yml"),
-		config.Include("yaml"),
+		config.Include("**/*.yml"),
+		config.Include("**/*.yaml"),
 		config.ReportType("rdjsonl"),
 	)
 
