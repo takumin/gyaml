@@ -3,6 +3,7 @@ module github.com/takumin/gyaml
 go 1.19
 
 require (
+	github.com/bmatcuk/doublestar/v4 v4.6.0
 	github.com/urfave/cli/v2 v2.25.7
 	gopkg.in/yaml.v3 v3.0.1
 )
