@@ -37,6 +37,3 @@ jobs:
   reviewdog-staticcheck:
     name: Reviewdog (staticcheck)
     uses: ./.github/workflows/reviewdog-staticcheck.yml
-  reviewdog-yamllint:
-    name: Reviewdog (yamllint)
-    uses: ./.github/workflows/reviewdog-yamllint.yml
