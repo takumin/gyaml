@@ -1,4 +1,0 @@
-# vim: ft=yaml :
-formatter:
-  type: basic
-  indentless_arrays: true
