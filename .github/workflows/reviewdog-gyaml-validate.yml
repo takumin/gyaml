@@ -9,9 +9,8 @@ on:
     - '.github/workflows/reviewdog-gyaml-validate.yml'
     - '.aqua.yaml'
     - '.reviewdog.yml'
-    - '**.json'
-    - '**.json.golden'
-    - '!**.invalid.json.golden'
+    - '**.yml'
+    - '**.yaml'
 permissions:
   checks: write
   contents: read
