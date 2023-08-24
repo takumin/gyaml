@@ -80,12 +80,12 @@ install: build
 
 .PHONY: snapshot
 snapshot:
-	goreleaser release --rm-dist --snapshot
+	goreleaser release --clean --snapshot
 
 .PHONY: release
 release:
 ifneq ($(GITHUB_TOKEN),)
-	goreleaser release --rm-dist
+	goreleaser release --clean
 endif
 
 .PHONY: clean
