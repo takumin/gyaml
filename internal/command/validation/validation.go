@@ -4,13 +4,13 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"slices"
 	"sort"
 
 	"github.com/urfave/cli/v2"
 
 	"github.com/takumin/gyaml/internal/config"
 	"github.com/takumin/gyaml/internal/filelist"
-	"github.com/takumin/gyaml/internal/helpers"
 	"github.com/takumin/gyaml/internal/parser"
 	"github.com/takumin/gyaml/internal/report"
 )
@@ -61,7 +61,9 @@ func NewCommands(cfg *config.Config, flags []cli.Flag) *cli.Command {
 func before(cfg *config.Config) func(ctx *cli.Context) error {
 	return func(ctx *cli.Context) error {
 		if ctx.NArg() >= 1 {
-			cfg.Paths = helpers.RemoveDuplicateStrings(ctx.Args().Slice())
+			s := ctx.Args().Slice()
+			sort.Strings(s)
+			cfg.Paths = slices.Compact(s)
 		}
 		return nil
 	}
