@@ -1,7 +1,7 @@
 package completion
 
 import (
-	"github.com/urfave/cli/v2"
+	"github.com/urfave/cli/v3"
 
 	"github.com/takumin/gyaml/internal/command/completion/bash"
 	"github.com/takumin/gyaml/internal/command/completion/fish"

@@ -3,7 +3,7 @@ package completion_test
 import (
 	"testing"
 
-	"github.com/urfave/cli/v2"
+	"github.com/urfave/cli/v3"
 
 	"github.com/takumin/gyaml/internal/command/completion"
 	"github.com/takumin/gyaml/internal/config"
