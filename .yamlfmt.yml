@@ -1,7 +1,6 @@
----
 gitignore_excludes: true
 exclude:
-- pnpm-lock.yaml
+- testdata/
 formatter:
   type: basic
   line_ending: lf
