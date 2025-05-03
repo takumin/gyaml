@@ -51,7 +51,7 @@ jobs:
     name: Reviewdog (shfmt)
     uses: ./.github/workflows/reviewdog-shfmt.yml
     permissions: {contents: read, checks: write, pull-requests: write}
-  reviewdog-staticcheck:
-    name: Reviewdog (staticcheck)
-    uses: ./.github/workflows/reviewdog-staticcheck.yml
+  reviewdog-golangci-lint:
+    name: Reviewdog (golangci-lint)
+    uses: ./.github/workflows/reviewdog-golangci-lint.yml
     permissions: {contents: read, checks: write, pull-requests: write}
