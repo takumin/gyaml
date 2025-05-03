@@ -1,10 +1,11 @@
 package zsh
 
 import (
+	"context"
 	"strings"
 	"text/template"
 
-	"github.com/urfave/cli/v2"
+	"github.com/urfave/cli/v3"
 
 	"github.com/takumin/gyaml/internal/config"
 )
@@ -18,9 +19,9 @@ _cli_zsh_autocomplete() {
 
 	cur=${words[-1]}
 	if [[ "$cur" == "-"* ]]; then
-		opts=("${(@f)$(_CLI_ZSH_AUTOCOMPLETE_HACK=1 ${words[@]:0:#words[@]-1} ${cur} --generate-bash-completion)}")
+		opts=("${(@f)$(_CLI_ZSH_AUTOCOMPLETE_HACK=1 ${words[@]:0:#words[@]-1} ${cur} --generate-shell-completion)}")
 	else
-		opts=("${(@f)$(_CLI_ZSH_AUTOCOMPLETE_HACK=1 ${words[@]:0:#words[@]-1} --generate-bash-completion)}")
+		opts=("${(@f)$(_CLI_ZSH_AUTOCOMPLETE_HACK=1 ${words[@]:0:#words[@]-1} --generate-shell-completion)}")
 	fi
 
 	if [[ "${opts[1]}" != "" ]]; then
@@ -40,9 +41,9 @@ func NewCommands(cfg *config.Config, flags []cli.Flag) *cli.Command {
 		Name:     "zsh",
 		Usage:    "zsh completion",
 		HideHelp: true,
-		Action: func(ctx *cli.Context) error {
+		Action: func(ctx context.Context, cmd *cli.Command) error {
 			t := template.Must(template.New("zshCompletion").Parse(strings.TrimSpace(zshCompletion) + "\n"))
-			return t.Execute(ctx.App.Writer, ctx.App.Name)
+			return t.Execute(cmd.Writer, cmd.Name)
 		},
 	}
 }

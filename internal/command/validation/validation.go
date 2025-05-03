@@ -1,13 +1,14 @@
 package validation
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"path/filepath"
 	"slices"
 	"sort"
 
-	"github.com/urfave/cli/v2"
+	"github.com/urfave/cli/v3"
 
 	"github.com/takumin/gyaml/internal/config"
 	"github.com/takumin/gyaml/internal/filelist"
@@ -21,27 +22,23 @@ func NewCommands(cfg *config.Config, flags []cli.Flag) *cli.Command {
 			Name:        "type",
 			Aliases:     []string{"t"},
 			Usage:       "report type",
-			EnvVars:     []string{"TYPE"},
+			Sources:     cli.EnvVars("TYPE"),
 			Value:       cfg.Report.Type,
 			Destination: &cfg.Report.Type,
 		},
-		&cli.MultiStringFlag{
-			Target: &cli.StringSliceFlag{
-				Name:    "include",
-				Aliases: []string{"i"},
-				Usage:   "include file extension",
-				EnvVars: []string{"INCLUDE"},
-			},
+		&cli.StringSliceFlag{
+			Name:        "include",
+			Aliases:     []string{"i"},
+			Usage:       "include file extension",
+			Sources:     cli.EnvVars("INCLUDE"),
 			Value:       cfg.Extention.Includes,
 			Destination: &cfg.Extention.Includes,
 		},
-		&cli.MultiStringFlag{
-			Target: &cli.StringSliceFlag{
-				Name:    "exclude",
-				Aliases: []string{"e"},
-				Usage:   "exclude file extension",
-				EnvVars: []string{"EXCLUDE"},
-			},
+		&cli.StringSliceFlag{
+			Name:        "exclude",
+			Aliases:     []string{"e"},
+			Usage:       "exclude file extension",
+			Sources:     cli.EnvVars("EXCLUDE"),
 			Value:       cfg.Extention.Excludes,
 			Destination: &cfg.Extention.Excludes,
 		},
@@ -58,19 +55,19 @@ func NewCommands(cfg *config.Config, flags []cli.Flag) *cli.Command {
 	}
 }
 
-func before(cfg *config.Config) func(ctx *cli.Context) error {
-	return func(ctx *cli.Context) error {
-		if ctx.NArg() >= 1 {
-			s := ctx.Args().Slice()
+func before(cfg *config.Config) func(ctx context.Context, cmd *cli.Command) (context.Context, error) {
+	return func(ctx context.Context, cmd *cli.Command) (context.Context, error) {
+		if cmd.NArg() >= 1 {
+			s := cmd.Args().Slice()
 			sort.Strings(s)
 			cfg.Paths = slices.Compact(s)
 		}
-		return nil
+		return ctx, nil
 	}
 }
 
-func action(cfg *config.Config) func(ctx *cli.Context) error {
-	return func(ctx *cli.Context) error {
+func action(cfg *config.Config) func(ctx context.Context, cmd *cli.Command) error {
+	return func(ctx context.Context, cmd *cli.Command) error {
 		paths := make([]string, 0, 1024)
 		for _, v := range cfg.Paths {
 			info, err := os.Stat(v)
@@ -123,7 +120,7 @@ func action(cfg *config.Config) func(ctx *cli.Context) error {
 					if err != nil {
 						return err
 					}
-					if _, err := fmt.Fprintln(ctx.App.Writer, string(buf)); err != nil {
+					if _, err := fmt.Fprintln(cmd.Writer, string(buf)); err != nil {
 						return err
 					}
 				default:

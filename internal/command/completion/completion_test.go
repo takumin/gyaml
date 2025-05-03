@@ -3,7 +3,7 @@ package completion_test
 import (
 	"testing"
 
-	"github.com/urfave/cli/v2"
+	"github.com/urfave/cli/v3"
 
 	"github.com/takumin/gyaml/internal/command/completion"
 	"github.com/takumin/gyaml/internal/config"
@@ -22,7 +22,7 @@ func TestNewCommands(t *testing.T) {
 		t.Errorf("expected command usage to be 'command completion', but got '%s'", cmd.Usage)
 	}
 
-	for _, subcmd := range cmd.Subcommands {
+	for _, subcmd := range cmd.Commands {
 		if subcmd == nil {
 			t.Errorf("expected subcommand to not be nil")
 		}

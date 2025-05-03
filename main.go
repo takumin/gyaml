@@ -1,11 +1,12 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"os"
 
-	"github.com/urfave/cli/v2"
+	"github.com/urfave/cli/v3"
 
 	"github.com/takumin/gyaml/internal/command/completion"
 	"github.com/takumin/gyaml/internal/command/validation"
@@ -27,7 +28,7 @@ func main() {
 			Name:        "log-level",
 			Aliases:     []string{"l"},
 			Usage:       "log level",
-			EnvVars:     []string{"LOG_LEVEL"},
+			Sources:     cli.EnvVars("LOG_LEVEL"),
 			Value:       cfg.LogLevel,
 			Destination: &cfg.LogLevel,
 		},
@@ -38,17 +39,16 @@ func main() {
 		validation.NewCommands(cfg, flags),
 	}
 
-	app := &cli.App{
-		Name:                 metadata.AppName(),
-		Usage:                metadata.AppDesc(),
-		Version:              fmt.Sprintf("%s (%s)", version.Version(), version.Revision()),
-		Authors:              []*cli.Author{{Name: metadata.AuthorName()}},
-		Flags:                flags,
-		Commands:             cmds,
-		EnableBashCompletion: true,
+	app := &cli.Command{
+		Name:                  metadata.AppName(),
+		Usage:                 metadata.AppDesc(),
+		Version:               fmt.Sprintf("%s (%s)", version.Version(), version.Revision()),
+		Flags:                 flags,
+		Commands:              cmds,
+		EnableShellCompletion: true,
 	}
 
-	if err := app.Run(os.Args); err != nil {
+	if err := app.Run(context.Background(), os.Args); err != nil {
 		log.Fatal(err)
 	}
 }

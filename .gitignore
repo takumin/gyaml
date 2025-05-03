@@ -3,3 +3,4 @@
 /book/
 coverage.html
 coverage.out
+**/.claude/settings.local.json
