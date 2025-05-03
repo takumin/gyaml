@@ -18,7 +18,9 @@ func NewCommands(cfg *config.Config, flags []cli.Flag) *cli.Command {
 			if err != nil {
 				return err
 			}
-			fmt.Fprint(ctx.App.Writer, fish)
+			if _, err := fmt.Fprint(ctx.App.Writer, fish); err != nil {
+				return err
+			}
 			return nil
 		},
 	}

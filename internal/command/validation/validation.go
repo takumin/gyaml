@@ -123,7 +123,9 @@ func action(cfg *config.Config) func(ctx *cli.Context) error {
 					if err != nil {
 						return err
 					}
-					fmt.Fprintln(ctx.App.Writer, string(buf))
+					if _, err := fmt.Fprintln(ctx.App.Writer, string(buf)); err != nil {
+						return err
+					}
 				default:
 					return fmt.Errorf("unsupported report type: %s", cfg.Report.Type)
 				}

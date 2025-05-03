@@ -27,7 +27,9 @@ func NewCommands(cfg *config.Config, flags []cli.Flag) *cli.Command {
 		Usage:    "powershell completion",
 		HideHelp: true,
 		Action: func(ctx *cli.Context) error {
-			fmt.Fprint(ctx.App.Writer, strings.TrimSpace(powershellCompletion)+"\n")
+			if _, err := fmt.Fprint(ctx.App.Writer, strings.TrimSpace(powershellCompletion)+"\n"); err != nil {
+				return err
+			}
 			return nil
 		},
 	}
