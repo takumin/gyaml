@@ -4,6 +4,8 @@ registries:
 - type: standard
   ref: v4.359.0 # renovate: depName=aquaproj/aqua-registry
 packages:
+- name: golang/go@go1.24.2
+- name: golangci/golangci-lint@v2.1.5
 - name: goreleaser/goreleaser@v2.9.0
 - name: securego/gosec@v2.22.3
 - name: reviewdog/reviewdog@v0.20.3
@@ -15,5 +17,3 @@ packages:
 - name: takumin/gyaml@v0.0.2
 - name: editorconfig-checker/editorconfig-checker@v3.2.1
 - name: google/yamlfmt@v0.16.0
-- name: golangci/golangci-lint@v2.1.5
-- name: golang/go@go1.24.2
