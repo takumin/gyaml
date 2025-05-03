@@ -7,7 +7,7 @@ import (
 	"slices"
 	"sort"
 
-	"github.com/urfave/cli/v2"
+	"github.com/urfave/cli/v3"
 
 	"github.com/takumin/gyaml/internal/config"
 	"github.com/takumin/gyaml/internal/filelist"
