@@ -17,3 +17,4 @@ packages:
 - name: editorconfig-checker/editorconfig-checker@v3.2.1
 - name: google/yamlfmt@v0.16.0
 - name: golangci/golangci-lint@v2.1.5
+- name: golang/go@go1.24.2
